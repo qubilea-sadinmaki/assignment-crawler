@@ -1,0 +1,8 @@
+
+/venv
+log.html
+output.xml
+playwright-log.txt
+report.html
+*.pyc
+tests/testdata/assignments.json
