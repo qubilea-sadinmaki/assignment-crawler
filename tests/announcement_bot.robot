@@ -6,17 +6,24 @@ Library    Collections
 Library    String
 Library    RequestsLibrary
 
-Suite Setup    Setup Suite
+Suite Setup       Setup Suite
 Suite Teardown    Teardown Suite
 *** Variables ***
-@{ASSIGNMENT_SEARCH_WORDS}    Test    QA    quality    tester    automaatiotestaus    Testiautomaatioasiantuntija
+@{ASSIGNMENT_SEARCH_WORDS}    
+...    Test    
+...    QA    
+...    quality    
+...    tester    
+...    automaatiotestaus    
+...    Testiautomaatioasiantuntija    
+...    Testaaja
 @{QUALIFIED_ASSIGNMENTS}
-${HEADLESS}    True
-${SLACK_URL}    https://hooks.slack.com/services/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
-${SLACK_NAME}    incoming-webhook
-${USER_NAME}    RF Assignments Bot
-${NOTIFY_SLACK}    True
-${ANNOUNCEMENTS_JSON}    ${CURDIR}/testdata/assignments.json
+${HEADLESS}                   ${True}
+${SLACK_URL}                  https://hooks.slack.com/services/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
+# ${SLACK_NAME}                 incoming-webhook
+# ${USER_NAME}                  RF Assignments Bot
+${NOTIFY_SLACK}               ${True}
+${ANNOUNCEMENTS_JSON}         ${CURDIR}/testdata/assignments.json
 
 *** Test Cases ***
 
@@ -24,7 +31,7 @@ Should Find Suitable Assigments from Finitec
     [Documentation]    This test case should find suitable assigments from Finitec
     [Tags]    finitec
     ${baseUrl}=    Set Variable    https://www.finitec.fi
-    Open Browser    ${baseUrl}/gigs    headless=${HEADLESS}
+    New Page    ${baseUrl}/gigs
     Click    [id='accept']
     @{assignments}    Get Elements    selector=div > div > div > div > div > div > div > div > a
 
@@ -35,7 +42,7 @@ Should Find Suitable Assigments from Finitec
             IF    ${freq} > 0
                 ${link}=    Get Attribute    ${assignment}    href
                 ${header}=    Get First Line    ${txt}
-                ${anchor}=    Form Slack Link    ${header}    ${baseUrl}${link}
+                ${anchor}=    Form Slack Link    Finitec: ${header}    ${baseUrl}${link}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}
             END 
     END
@@ -44,8 +51,8 @@ Should Find Suitable Assigments from Digia
     [Documentation]    This test case should find suitable assigments from Digia
     [Tags]    digia
     ${baseUrl}=    Set Variable    https://digiahub.com/Project/OpenProjects
-    Open Browser    ${baseUrl}    headless=${HEADLESS}
-    @{assignments}    Get Elements    selector=div > div > div > div > div > div:has(h4)        # div > div > div > div > h4
+    New Page    ${baseUrl}
+    @{assignments}    Get Elements    selector=div > div > div > div > div > div:has(h4)
 
     FOR    ${assignment}    IN    @{assignments}
             ${txt}=    Get Text    ${assignment}
@@ -59,7 +66,7 @@ Should Find Suitable Assigments from Digia
                 ${onclick}=    Get Attribute    ${apply_btn}    onclick
                 ${assignment_id}=    Extract Word Between    ${onclick}    '    '
                 ${header}=    Get Line From    ${txt}    1     
-                ${anchor}=    Form Slack Link    ${header}    https://digiahub.com/Project/ApplyForProject/${assignment_id}
+                ${anchor}=    Form Slack Link    Digia: ${header}    https://digiahub.com/Project/ApplyForProject/${assignment_id}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}
             END 
     END
@@ -68,7 +75,7 @@ Should Find Suitable Assigments from Onsiter
     [Documentation]    This test case should find suitable assigments from Onsiter
     [Tags]    onsiter
     ${baseUrl}=    Set Variable    https://onsiter.com
-    Open Browser    ${baseUrl}/fi/projects    headless=${HEADLESS}
+    New Page    ${baseUrl}/fi/projects
     ${cookie_btn}=    Get Element    css=button.button-inline-green
     Click    ${cookie_btn}    
 
@@ -81,7 +88,7 @@ Should Find Suitable Assigments from Onsiter
             IF    ${freq} > 0
                 ${show_assignment_btn}=    Get Element    ${assignment} >> a
                 ${link}=    Get Attribute    ${show_assignment_btn}    href
-                ${anchor}=    Form Slack Link    ${txt}    ${baseUrl}${link}
+                ${anchor}=    Form Slack Link    Onsiter: ${txt}    ${baseUrl}${link}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}       
             END 
     END
@@ -90,8 +97,7 @@ Should Find Suitable Assigments from Verama
     [Documentation]    This test case should find suitable assigments from Onsiter
     [Tags]    verama
     ${baseUrl}=    Set Variable    https://app.verama.com
-    Open Browser    ${baseUrl}/en/job-requests?page=0&size=20&sortConfig=%5B%7B%22sortBy%22%3A%22firstDayOfApplications%22%2C%22order%22%3A%22DESC%22%7D%5D&filtersConfig=%7B%22location%22%3A%7B%22id%22%3Anull%2C%22signature%22%3A%22%22%2C%22city%22%3Anull%2C%22country%22%3A%22Suomi%22%2C%22name%22%3A%22Suomi%22%2C%22locationId%22%3A%22here%3Acm%3Anamedplace%3A20241487%22%2C%22countryCode%22%3A%22FIN%22%2C%22suggestedPhoneCode%22%3A%22FI%22%7D%2C%22remote%22%3A%5B%5D%2C%22query%22%3A%22%22%2C%22skillRoleCategories%22%3A%5B%5D%2C%22frequency%22%3A%22DAILY%22%2C%22radius%22%3A0%2C%22dedicated%22%3Afalse%2C%22originIds%22%3A%5B%5D%2C%22favouritesOnly%22%3Afalse%2C%22recommendedOnly%22%3Afalse%2C%22languages%22%3A%5B%5D%2C%22level%22%3A%5B%5D%2C%22skillIds%22%3A%5B%5D%2C%22skills%22%3A%5B%5D%7D    
-    ...    headless=${HEADLESS}
+    New Page    ${baseUrl}/en/job-requests?page=0&size=20&sortConfig=%5B%7B%22sortBy%22%3A%22firstDayOfApplications%22%2C%22order%22%3A%22DESC%22%7D%5D&filtersConfig=%7B%22location%22%3A%7B%22id%22%3Anull%2C%22signature%22%3A%22%22%2C%22city%22%3Anull%2C%22country%22%3A%22Suomi%22%2C%22name%22%3A%22Suomi%22%2C%22locationId%22%3A%22here%3Acm%3Anamedplace%3A20241487%22%2C%22countryCode%22%3A%22FIN%22%2C%22suggestedPhoneCode%22%3A%22FI%22%7D%2C%22remote%22%3A%5B%5D%2C%22query%22%3A%22%22%2C%22skillRoleCategories%22%3A%5B%5D%2C%22frequency%22%3A%22DAILY%22%2C%22radius%22%3A0%2C%22dedicated%22%3Afalse%2C%22originIds%22%3A%5B%5D%2C%22favouritesOnly%22%3Afalse%2C%22recommendedOnly%22%3Afalse%2C%22languages%22%3A%5B%5D%2C%22level%22%3A%5B%5D%2C%22skillIds%22%3A%5B%5D%2C%22skills%22%3A%5B%5D%7D
     ${cookie_btn}=    Get Element    selector=#cookies-bar > div > button > div > div > i
     Click    ${cookie_btn}    
 
@@ -104,14 +110,17 @@ Should Find Suitable Assigments from Verama
             IF    ${freq} > 0
                 ${link}=    Get Attribute    ${assignment}    href
                 ${header}=    Get First Line    ${txt}
-                ${anchor}=    Form Slack Link    ${header}    ${baseUrl}/en${link}           
+                ${anchor}=    Form Slack Link    Verama: ${header}    ${baseUrl}/en${link}           
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}       
             END 
     END
     
 *** Keywords ***  
 Setup Suite
-    Log    message=Setup Suite
+    IF    ${HEADLESS} == False
+        Open Browser    browser=chromium    headless=${HEADLESS}
+    END
+    
 
 Teardown Suite
     @{new_assinments}=    Add Announcements    ${QUALIFIED_ASSIGNMENTS}    ${ANNOUNCEMENTS_JSON}

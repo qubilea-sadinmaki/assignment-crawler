@@ -1,0 +1,50 @@
+# .github/workflows/robot-tests.yml
+
+name: Run Robot Framework Tests
+
+on:
+  # Runs the workflow on every push to main branch
+  push:
+    branches:
+      - main
+  # Allows manual triggering of the workflow
+  workflow_dispatch:
+  # Schedule to run every day at 9 AM UTC
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'  # Replace '3.x' with the desired Python version
+
+    # Step 3: Create and activate virtual environment
+    - name: Install dependencies in venv
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run Robot Framework tests
+    - name: Run Robot Framework tests
+      run: |
+        source venv/bin/activate
+        robot --outputdir results tests/
+    
+    # Step 5: Upload test results (Optional)
+    - name: Archive Robot Framework results
+      uses: actions/upload-artifact@v3
+      with:
+        name: robot-results
+        path: results/

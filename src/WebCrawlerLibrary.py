@@ -8,7 +8,7 @@ class WebCrawlerLibrary:
     def __init__(self):
         pass
 
-    def notify_slack(self, message: str, webhook_url: str)-> requests.models.Response:
+    def notify_slack(self, message: str, webhook_url: str):
         """
         Sends a message to a Slack channel.
         Args:
@@ -17,7 +17,13 @@ class WebCrawlerLibrary:
         """
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         resp = requests.post(webhook_url, json={"text": message}, allow_redirects=False)
-        return resp
+        
+        # Check Slack's response to ensure the message was accepted
+        if resp.status_code == 200:
+            print("Message sent to Slack successfully!")
+        else:
+            print(f"Failed to send message. Status code: {resp.status_code}, Response: {resp.text}")
+            raise Exception(f"Failed to send message. Status code: {resp.status_code}, Response: {resp.text}")
 
     def get_first_line(self, multi_line_string: str)-> str:
         # Split the string into lines
