@@ -40,7 +40,8 @@ jobs:
     # Step 4: Run Robot Framework tests
     - name: Run Robot Framework tests
       run: |
-        robot -P ./src --outputdir results tests/announcement_bot.robot
+        source venv/bin/activate
+        $GITHUB_WORKSPACE/.venv/bin/python3.12 -m robot -P ./src --outputdir results tests/announcement_bot.robot
     
     # Step 5: Upload test results (Optional)
     - name: Archive Robot Framework results
