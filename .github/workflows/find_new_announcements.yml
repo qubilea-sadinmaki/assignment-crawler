@@ -26,7 +26,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'  # Replace '3.x' with the desired Python version
+        python-version: '3.12'  # Replace '3.x' with the desired Python version
 
     # Step 3: Create and activate virtual environment
     - name: Install dependencies in venv
@@ -40,7 +40,6 @@ jobs:
     # Step 4: Run Robot Framework tests
     - name: Run Robot Framework tests
       run: |
-        source venv/bin/activate
         robot -P ./src --outputdir results tests/announcement_bot.robot
     
     # Step 5: Upload test results (Optional)
