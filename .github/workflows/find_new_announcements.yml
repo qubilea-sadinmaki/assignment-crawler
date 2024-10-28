@@ -41,7 +41,7 @@ jobs:
     - name: Run Robot Framework tests
       run: |
         source venv/bin/activate
-        robot -P ./src --outputdir results tests/
+        robot -P ./src --outputdir results tests/announcement_bot.robot
     
     # Step 5: Upload test results (Optional)
     - name: Archive Robot Framework results
