@@ -35,6 +35,7 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+        rfbrowser init
 
     # Step 4: Run Robot Framework tests
     - name: Run Robot Framework tests
