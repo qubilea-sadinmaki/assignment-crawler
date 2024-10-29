@@ -18,7 +18,7 @@ Suite Teardown    Teardown Suite
 ...    Testaaja
 @{QUALIFIED_ASSIGNMENTS}
 ${HEADLESS}                   ${True}
-${SLACK_URL}                  https://hooks.slack.com/services/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
+${SLACK_URL}                  https://hooks.slack.com/services/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
 # ${SLACK_NAME}                 incoming-webhook
 # ${USER_NAME}                  RF Assignments Bot
 ${NOTIFY_SLACK}               ${True}
