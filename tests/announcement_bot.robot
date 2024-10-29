@@ -4,7 +4,6 @@ Library    JSONLibrary
 Library    WebCrawlerLibrary
 Library    Collections
 Library    String
-Library    RequestsLibrary
 
 Suite Setup       Setup Suite
 Suite Teardown    Teardown Suite
