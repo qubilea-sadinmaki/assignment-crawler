@@ -24,8 +24,8 @@ jobs:
 
     - name: Set up Git user for commit
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "qubilea-sadinmaki"
+        git config --global user.email "ptsadinmaki@gmail.com"
 
     # Step 2: Set up Python environment
     - name: Set up Python
