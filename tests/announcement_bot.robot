@@ -144,11 +144,12 @@ Teardown Suite
 
         IF    ${NOTIFY_SLACK}
             Notify Slack    ${assingments_str}    ${SLACK_URL}
+            Log To Console    message=New assignments found! Notifying Slack.
         ELSE
             Log    ${assingments_str}
         END
     ELSE
-        Log    No new assignments found!
+        Log To Console    No new assignments found!
     END
     
     Remove Old Announcements    file_path=${ANNOUNCEMENTS_JSON}
