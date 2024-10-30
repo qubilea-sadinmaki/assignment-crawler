@@ -4,6 +4,7 @@ Library    JSONLibrary
 Library    WebCrawlerLibrary
 Library    Collections
 Library    String
+Library    OperatingSystem
 
 Suite Setup       Setup Suite
 Suite Teardown    Teardown Suite
@@ -18,7 +19,7 @@ Suite Teardown    Teardown Suite
 ...    Testaaja
 @{QUALIFIED_ASSIGNMENTS}
 ${HEADLESS}                   ${True}
-${SLACK_URL}                  https://hooks.slack.com/services/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
+${SLACK_URL}
 # ${SLACK_NAME}                 incoming-webhook
 # ${USER_NAME}                  RF Assignments Bot
 ${NOTIFY_SLACK}               ${True}
@@ -118,6 +119,14 @@ Should Find Suitable Assigments from Verama
 Setup Suite
     IF    ${HEADLESS} == False
         Open Browser    browser=chromium    headless=${HEADLESS}
+    END
+
+    IF    ${NOTIFY_SLACK}
+        IF   '${SLACK_URL}' == '${EMPTY}'
+            ${url}=    Get Environment Variable    name=SLACK_URL
+            Set Suite Variable    ${SLACK_URL}    ${url}        
+            Log To Console    message=Using slack url from environment variable: ${SLACK_URL}
+        END
     END
     
 

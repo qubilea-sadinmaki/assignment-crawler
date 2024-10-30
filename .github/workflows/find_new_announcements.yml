@@ -41,6 +41,7 @@ jobs:
     - name: Run Robot Framework tests
       env:
           PYTHONPATH: ${{ github.workspace }}/src  # Add 'src' to the PYTHONPATH
+          SLACK_URL: ${{ secrets.SLACK_URL }}
       run: | 
           source venv/bin/activate
           robot --outputdir results tests/announcement_bot.robot
