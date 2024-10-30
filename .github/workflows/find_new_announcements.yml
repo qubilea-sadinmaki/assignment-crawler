@@ -61,7 +61,7 @@ jobs:
     # Step 6: Commit and push JSON changes (for next run)
     - name: Commit and push JSON changes
       run: |
-        git add tests/testdata/assignments.json
+        git add ./tests/testdata/assignments.json
         git commit -m "Update JSON file with updates assignments"
         git push https://${{ secrets.GITHUB_TOKEN }}@github.com/qubilea-sadinmaki/assignment-crawler.git
       env:
