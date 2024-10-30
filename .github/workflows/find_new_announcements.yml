@@ -24,8 +24,8 @@ jobs:
 
     - name: Set up Git user for commit
       run: |
-        git config --global user.name "qubilea-sadinmaki"
-        git config --global user.email "ptsadinmaki@gmail.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
     # Step 2: Set up Python environment
     - name: Set up Python
@@ -63,6 +63,6 @@ jobs:
       run: |
         git add tests/testdata/assignments.json
         git commit -m "Update JSON file with updates assignments"
-        git push
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/qubilea-sadinmaki/assignment-crawler.git
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
