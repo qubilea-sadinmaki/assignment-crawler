@@ -46,9 +46,18 @@ jobs:
           source venv/bin/activate
           robot --outputdir results tests/announcement_bot.robot
     
-    # Step 5: Upload test results (Optional)
+    # Step 5: Upload test results
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v3
       with:
           name: robot-results
           path: results/
+
+    # Step 6: Commit and push JSON changes (for next run)
+    - name: Commit and push JSON changes
+      run: |
+        git add tests/testdata/assignments.json
+        git commit -m "Update JSON file with updates assignments"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
