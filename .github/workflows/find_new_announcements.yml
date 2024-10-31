@@ -47,7 +47,7 @@ jobs:
 
     - name: Check if JSON file exists and create if not
       run: |
-        FILE_PATH="path/to/folder/data.json"  # Define the file path here
+        FILE_PATH="testdata/assignments.json"  # Define the file path here
         FOLDER_PATH=$(dirname "$FILE_PATH")
         
         # Check if the file exists
