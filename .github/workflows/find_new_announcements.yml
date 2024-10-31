@@ -41,16 +41,24 @@ jobs:
     - name: Download JSON artifact
       uses: actions/download-artifact@v4
       with:
-        name: assignments.json
-        path: testdata
+        name: assignments
+        path: testdata/assignments.json
       continue-on-error: true
 
-    # Check if JSON file exists; create a default if missing
-    - name: Check for JSON file and create default if missing
+    - name: Check if JSON file exists and create if not
       run: |
-        if [ ! -f "testdata/assignments.json" ]; then
-          echo '{}' > testdata/assignments.json  # Creates an empty JSON as default
+        FILE_PATH="path/to/folder/data.json"  # Define the file path here
+        FOLDER_PATH=$(dirname "$FILE_PATH")
+        
+        # Check if the file exists
+        if [ ! -f "$FILE_PATH" ]; then
+          echo "File not found, creating folder and empty JSON file."
+          mkdir -p "$FOLDER_PATH"  # Create folder if it doesnt exist
+          echo '{}' > "$FILE_PATH"  # Create an empty JSON file with {}
+        else
+          echo "File found: $FILE_PATH"
         fi
+        
 
     # Run Robot Framework tests
     - name: Run Robot Framework tests
@@ -65,8 +73,8 @@ jobs:
     - name: Upload JSON artifact
       uses: actions/upload-artifact@v4
       with:
-        name: assignments.json
-        path: testdata
+        name: assignments
+        path: testdata/assignments.json
         overwrite: true
         compression-level: 0
 
