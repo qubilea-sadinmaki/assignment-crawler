@@ -18,24 +18,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository code
+    # Checkout the repository code
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        persist-credentials: false
 
-    - name: Set up Git user for commit
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-    # Step 2: Set up Python environment
+    # Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'  # Replace '3.x' with the desired Python version
 
-    # Step 3: Create and activate virtual environment
+    # Create and activate virtual environment
     - name: Install dependencies in venv
       run: |
         python -m venv venv
@@ -44,7 +37,14 @@ jobs:
         pip install -r requirements.txt
         rfbrowser init
 
-    # Step 4: Run Robot Framework tests
+    # Download the JSON artifact from the previous run
+    - name: Download JSON artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: assignments
+      continue-on-error: true
+
+    # Run Robot Framework tests
     - name: Run Robot Framework tests
       env:
           PYTHONPATH: ${{ github.workspace }}/src  # Add 'src' to the PYTHONPATH
@@ -53,18 +53,18 @@ jobs:
           source venv/bin/activate
           robot --outputdir results tests/announcement_bot.robot
     
-    # Step 5: Upload test results
+    # Upload JSON artifact
+    - name: Upload JSON artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: assignments
+        path: testdata/assignments.json
+        overwrite: true
+        compression-level: 0
+
+    # Upload test results
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v4
       with:
           name: robot-results
           path: results/
-
-    # Step 6: Commit and push JSON changes (for next run)
-    - name: Commit and push JSON changes
-      run: |
-        git add ./tests/testdata/assignments.json
-        git commit -m "Update JSON file with updates assignments"
-        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/qubilea-sadinmaki/assignment-crawler.git
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
