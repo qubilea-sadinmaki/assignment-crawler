@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
   # Schedule to run every day at 9 AM UTC
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '1 1 * * *'
 
 jobs:
   run-tests:
@@ -44,6 +44,13 @@ jobs:
         name: assignments.json
         path: testdata
       continue-on-error: true
+
+    # Check if JSON file exists; create a default if missing
+    - name: Check for JSON file and create default if missing
+      run: |
+        if [ ! -f "testdata/assignments.json" ]; then
+          echo '{}' > testdata/assignments.json  # Creates an empty JSON as default
+        fi
 
     # Run Robot Framework tests
     - name: Run Robot Framework tests
