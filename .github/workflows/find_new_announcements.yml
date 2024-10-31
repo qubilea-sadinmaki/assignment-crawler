@@ -41,8 +41,8 @@ jobs:
     - name: Download JSON artifact
       uses: actions/download-artifact@v4
       with:
-        name: assignments
-        path: testdata/assignments.json
+        name: assignments.json
+        path: testdata
       continue-on-error: true
 
     # Run Robot Framework tests
@@ -52,14 +52,14 @@ jobs:
           SLACK_URL: ${{ secrets.SLACK_URL }}
       run: | 
           source venv/bin/activate
-          robot --outputdir results tests/announcement_bot.robot
+          robot --outputdir results -v ANNOUNCEMENTS_JSON:testdata/assignments.json tests/announcement_bot.robot
     
     # Upload JSON artifact
     - name: Upload JSON artifact
       uses: actions/upload-artifact@v4
       with:
-        name: assignments
-        path: testdata/assignments.json
+        name: assignments.json
+        path: testdata
         overwrite: true
         compression-level: 0
 
