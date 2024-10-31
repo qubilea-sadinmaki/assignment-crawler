@@ -42,6 +42,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: assignments
+        path: testdata/assignments.json
       continue-on-error: true
 
     # Run Robot Framework tests
