@@ -54,7 +54,6 @@ jobs:
         if [ ! -f "$FILE_PATH" ]; then
           echo "File not found, creating folder and empty JSON file."
           mkdir -p "$FOLDER_PATH"  # Create folder if it doesnt exist
-          echo '{}' > "$FILE_PATH"  # Create an empty JSON file with {}
         else
           echo "File found: $FILE_PATH"
         fi
