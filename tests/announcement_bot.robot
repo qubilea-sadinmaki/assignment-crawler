@@ -20,8 +20,6 @@ Suite Teardown    Teardown Suite
 @{QUALIFIED_ASSIGNMENTS}
 ${HEADLESS}                   ${True}
 ${SLACK_URL}
-# ${SLACK_NAME}                 incoming-webhook
-# ${USER_NAME}                  RF Assignments Bot
 ${NOTIFY_SLACK}               ${True}
 ${ANNOUNCEMENTS_JSON}         ${CURDIR}/testdata/assignments.json
 
@@ -125,7 +123,6 @@ Setup Suite
         IF   '${SLACK_URL}' == '${EMPTY}'
             ${url}=    Get Environment Variable    name=SLACK_URL
             Set Suite Variable    ${SLACK_URL}    ${url}        
-            Log To Console    message=Using slack url from environment variable: ${SLACK_URL}
         END
     END
     

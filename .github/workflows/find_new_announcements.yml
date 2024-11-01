@@ -9,27 +9,24 @@ on:
       - main
   # Allows manual triggering of the workflow
   workflow_dispatch:
-  # Schedule to run every day at 9 AM UTC
+  # Schedule to run every day at 07 AM UTC (09 AM Finnish time) 
   schedule:
-    - cron: '1 1 * * *'
+    - cron: '0 7 * * *'
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the repository code
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'  # Replace '3.x' with the desired Python version
+        python-version: '3.12'
 
-    # Create and activate virtual environment
-    - name: Install dependencies in venv
+    - name: Create and activate virtual environment
       run: |
         python -m venv venv
         source venv/bin/activate
@@ -37,8 +34,7 @@ jobs:
         pip install -r requirements.txt
         rfbrowser init
 
-    # Download the JSON artifact from the previous run
-    - name: Download JSON artifact
+    - name: Download announcements JSON from the previous run
       uses: actions/download-artifact@v4
       with:
         name: assignments
@@ -47,29 +43,26 @@ jobs:
 
     - name: Check if JSON file exists and create if not
       run: |
-        FILE_PATH="testdata/assignments.json"  # Define the file path here
-        FOLDER_PATH=$(dirname "$FILE_PATH")
+        FOLDER_PATH="testdata"
         
         # Check if the file exists
-        if [ ! -f "$FILE_PATH" ]; then
-          echo "File not found, creating folder and empty JSON file."
-          mkdir -p "$FOLDER_PATH"  # Create folder if it doesnt exist
+        if [ ! -d "$FOLDER_PATH" ]; then
+          echo "Folder 'testdata' not found, creating folder."
+          mkdir -p "$FOLDER_PATH"
         else
           echo "File found: $FILE_PATH"
         fi
         
 
-    # Run Robot Framework tests
     - name: Run Robot Framework tests
       env:
-          PYTHONPATH: ${{ github.workspace }}/src  # Add 'src' to the PYTHONPATH
+          PYTHONPATH: ${{ github.workspace }}/src
           SLACK_URL: ${{ secrets.SLACK_URL }}
       run: | 
           source venv/bin/activate
           robot --outputdir results -v ANNOUNCEMENTS_JSON:testdata/assignments.json tests/announcement_bot.robot
     
-    # Upload JSON artifact
-    - name: Upload JSON artifact
+    - name: Upload announcements JSON artifact
       uses: actions/upload-artifact@v4
       with:
         name: assignments
@@ -77,7 +70,6 @@ jobs:
         overwrite: true
         compression-level: 0
 
-    # Upload test results
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v4
       with:
