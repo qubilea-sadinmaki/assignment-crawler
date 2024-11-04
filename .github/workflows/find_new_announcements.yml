@@ -9,51 +9,24 @@ on:
       - main
   # Allows manual triggering of the workflow
   workflow_dispatch:
-  # Schedule to run every day at 07 AM UTC (09 AM Finnish time) 
+  # Schedule to run every working day at 07 AM UTC (09 AM Finnish time) 
   schedule:
     - cron: '0 7 * * 1-5'
 
 jobs:
-  fetch-artifacts:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Download artifact
-        uses: actions/github-script@v6
-        continue-on-error: true
-        env:
-          WORKFLOW_FILENAME: find_new_announcements.yml
-          ARTIFACT_NAME: assignments
-          ARTIFACT_FILENAME: assignments.zip
-          UNZIP_DIR: tests/testdata
-        with:
-          script: |
-            const script = require('./scripts/download-previous-artifact.js')
-            await script({github, context, core}) 
-
   run-tests:
     runs-on: ubuntu-latest
-    # We need to make sure that we have actions read access to get the previous artifact
-    permissions:
-      contents: read
-      actions: read
-      packages: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Restore cached Primes
+      id: cache-primes-restore
+      uses: actions/cache/restore@v4
+      with:
+        path: testdata/assignments.json
+        key: ${{ runner.os }}-primes
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -76,14 +49,12 @@ jobs:
           source venv/bin/activate
           robot --outputdir results tests/announcement_bot.robot
     
-    - name: Upload announcements JSON artifact
-      uses: actions/upload-artifact@v4
+    - name: Save Primes
+      id: cache-primes-save
+      uses: actions/cache/save@v4
       with:
-        name: assignments
-        path: tests/testdata/assignments.json
-        overwrite: true
-        compression-level: 0
-        retention-days: 5
+        path: testdata/assignments.json
+        key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }}
 
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v4
