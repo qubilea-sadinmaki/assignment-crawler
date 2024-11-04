@@ -14,37 +14,37 @@ on:
     - cron: '0 7 * * 1-5'
 
 jobs:
-  # fetch-artifacts:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     actions: read
-  #     packages: write
+  fetch-artifacts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      packages: write
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-  #     - name: Install dependencies
-  #       run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-  #     - name: Install Playwright Browsers
-  #       run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-  #     - name: Download artifact
-  #       uses: actions/github-script@v6
-  #       continue-on-error: true
-  #       env:
-  #         WORKFLOW_FILENAME: testing.yml
-  #         ARTIFACT_NAME: playwright-snapshots
-  #         ARTIFACT_FILENAME: playwright-snapshots.zip
-  #         UNZIP_DIR: tests
-  #       with:
-  #         script: |
-  #           const script = require('./scripts/download-previous-artifact.js')
-  #           await script({github, context, core}) 
+      - name: Download artifact
+        uses: actions/github-script@v6
+        continue-on-error: true
+        env:
+          WORKFLOW_FILENAME: testing.yml
+          ARTIFACT_NAME: playwright-snapshots
+          ARTIFACT_FILENAME: playwright-snapshots.zip
+          UNZIP_DIR: tests
+        with:
+          script: |
+            const script = require('./scripts/download-previous-artifact.js')
+            await script({github, context, core}) 
 
   run-tests:
     runs-on: ubuntu-latest
