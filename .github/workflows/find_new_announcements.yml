@@ -1,4 +1,4 @@
-# .github/workflows/robot-tests.yml
+# .github/workflows/find_new_announcements.yml
 
 name: Run Robot Framework Tests
 
@@ -11,11 +11,48 @@ on:
   workflow_dispatch:
   # Schedule to run every day at 07 AM UTC (09 AM Finnish time) 
   schedule:
-    - cron: '0 7 * * *'
+    - cron: '0 7 * * 1-5'
 
 jobs:
+  # fetch-artifacts:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     actions: read
+  #     packages: write
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Install Playwright Browsers
+  #       run: npx playwright install --with-deps
+
+  #     - name: Download artifact
+  #       uses: actions/github-script@v6
+  #       continue-on-error: true
+  #       env:
+  #         WORKFLOW_FILENAME: testing.yml
+  #         ARTIFACT_NAME: playwright-snapshots
+  #         ARTIFACT_FILENAME: playwright-snapshots.zip
+  #         UNZIP_DIR: tests
+  #       with:
+  #         script: |
+  #           const script = require('./scripts/download-previous-artifact.js')
+  #           await script({github, context, core}) 
+
   run-tests:
     runs-on: ubuntu-latest
+    # We need to make sure that we have actions read access to get the previous artifact
+    permissions:
+      contents: read
+      actions: read
+      packages: write
 
     steps:
     - name: Checkout repository
@@ -33,43 +70,23 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         rfbrowser init
-
-    - name: Download announcements JSON from the previous run
-      uses: actions/download-artifact@v4
-      with:
-        name: assignments
-        path: testdata/assignments.json
-      continue-on-error: true
-
-    - name: Check if JSON file exists and create if not
-      run: |
-        FOLDER_PATH="testdata"
         
-        # Check if the file exists
-        if [ ! -d "$FOLDER_PATH" ]; then
-          echo "Folder 'testdata' not found, creating folder."
-          mkdir -p "$FOLDER_PATH"
-        else
-          echo "File found: $FILE_PATH"
-        fi
-        
-
     - name: Run Robot Framework tests
       env:
           PYTHONPATH: ${{ github.workspace }}/src
           SLACK_URL: ${{ secrets.SLACK_URL }}
       run: | 
           source venv/bin/activate
-          robot --outputdir results -v ANNOUNCEMENTS_JSON:testdata/assignments.json tests/announcement_bot.robot
+          robot --outputdir results tests/announcement_bot.robot
     
     - name: Upload announcements JSON artifact
       uses: actions/upload-artifact@v4
       with:
         name: assignments
-        path: testdata/assignments.json
+        path: tests/testdata/assignments.json
         overwrite: true
         compression-level: 0
-        retention-days: 3
+        retention-days: 5
 
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v4
