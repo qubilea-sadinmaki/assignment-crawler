@@ -149,5 +149,5 @@ Teardown Suite
         Log To Console    No new assignments found!
     END
     
-    Remove Old Announcements    file_path=${ANNOUNCEMENTS_JSON}
+    Remove Old Notifications    file_path=${ANNOUNCEMENTS_JSON}
     Close Browser

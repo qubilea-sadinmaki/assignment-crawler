@@ -26,7 +26,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: tests/testdata/assignments.json
-        key: assignments
+        key: ${{ runner.os }}-primes
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/assignments.json
-        key: assignments
+        key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }}
 
     - name: Archive Robot Framework results
       uses: actions/upload-artifact@v4
