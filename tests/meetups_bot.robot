@@ -21,7 +21,7 @@ Suite Teardown    Teardown Suite
 @{QUALIFIED_NOTIFICATION}
 ${HEADLESS}                   ${True}
 ${SLACK_URL}
-${NOTIFY_SLACK}               ${False}
+${NOTIFY_SLACK}               ${True}
 ${JSON_PATH}         ${CURDIR}/testdata/meetups.json
 
 *** Test Cases ***
