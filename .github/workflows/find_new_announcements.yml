@@ -21,7 +21,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Restore cached Primes
+    - name: Restore cached Announcements
       id: cache-data
       uses: actions/cache/restore@v4
       with:
@@ -60,7 +60,7 @@ jobs:
           source venv/bin/activate
           robot --outputdir results tests/announcement_bot.robot
     
-    - name: Save Primes
+    - name: Save Announcements
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/assignments.json

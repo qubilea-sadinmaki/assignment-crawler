@@ -21,7 +21,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Restore cached Primes
+    - name: Restore cached meetups
       id: cache-meetups
       uses: actions/cache/restore@v4
       with:
@@ -60,7 +60,7 @@ jobs:
           source venv/bin/activate
           robot --outputdir results --exclude skip tests/meetups_bot.robot
     
-    - name: Save Primes
+    - name: Save meetups
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/meetups.json
