@@ -74,7 +74,7 @@ Should Find Suitable Meetups from Meetup.com
     ${base_url}=    Set Variable    https://www.meetup.com/find
     ${content_type}=    Set Variable    /?location=fi--Helsinki&source=EVENTS&categoryId=546&distance=tenMiles
     New Page    ${base_url}${content_type}
-    Click    [id='onetrust-accept-btn-handler']  
+    # Click    [id='onetrust-accept-btn-handler']  
     
     @{meetups}    Get Elements    [data-testid="categoryResults-eventCard"]
 
@@ -187,7 +187,7 @@ Crawl Meetupcom Group Page
     [Documentation]    This method should find suitable meetups from page in meetup.com
     [Arguments]    ${page_url}    ${page_name}
     New Page    https://www.meetup.com/${page_url}/events/?type=upcoming
-    # Click    [id='onetrust-accept-btn-handler'] 
+    Click    [id='onetrust-accept-btn-handler'] 
     @{meetups}    Get Elements    a[class="flex h-full flex-col justify-between space-y-5 outline-offset-8 hover:no-underline"]
 
     FOR    ${meetup}    IN    @{meetups}
