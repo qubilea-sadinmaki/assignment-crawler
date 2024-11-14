@@ -2,6 +2,7 @@ import requests
 import urllib3;
 import json
 import os
+import re
 from datetime import datetime, timedelta
 
 class WebCrawlerLibrary:
@@ -25,6 +26,20 @@ class WebCrawlerLibrary:
             print(f"Failed to send message. Status code: {resp.status_code}, Response: {resp.text}")
             raise Exception(f"Failed to send message. Status code: {resp.status_code}, Response: {resp.text}")
 
+    def add_baseurl_if_relative(self, base_url: str, url: str)-> str:
+        """
+        Adds the base URL to a relative URL.
+        Args:
+        - base_url: The base URL.
+        - url: The URL to check.
+        
+        Returns:
+        - The URL with the base URL added if it was relative.
+        """
+        if url.startswith("http"):
+            return url
+        return base_url + url
+    
     def get_first_line(self, multi_line_string: str)-> str:
         # Split the string into lines
         lines = multi_line_string.splitlines()
@@ -101,10 +116,49 @@ class WebCrawlerLibrary:
         """
         txt = txt.lower()
         words = [word.lower() for word in words]
+        short_words = [word for word in words if len(word) < 4]
+        # Remove the short words from the original list
+        words[:] = [word for word in words if len(word) >= 4]
         frequency = 0
+        short_word_matches = []
+
+        # We want to find words like AI, QA as whole words and not as part of other words
+        for short_word in short_words:
+            short_word_matches = self.find_whole_words(txt, [short_word])
+            frequency += len(short_word_matches)
+
         for word in words:
             frequency += txt.count(word)
+
+        # print(f"Short words: {short_words} - {short_word_matches}")
+        # print(f"Words: {txt.count(word)} ")
         return frequency
+
+    def has_right_words(self, txt: str, words_to_have: list[str], words_to_not_have: list[str])-> int:
+        """
+        Checks if a text contains the right words and not the wrong words.
+        Args:
+        - txt: The text to check.
+        - words_to_have: A list of words that must be present in the text.
+        - words_to_not_have: A list of words that must not be present in the text.
+        
+        Returns:
+        - True if the text contains the right words and not the wrong words, False otherwise.
+        """
+        if self.find_words_frequency(txt, words_to_not_have) > 0:
+            return 0
+        
+        return self.find_words_frequency(txt, words_to_have)
+    
+    def find_whole_words(self, text, words):
+        # Create a regular expression pattern for the words
+        # \b ensures word boundaries
+        pattern = r'\b(' + '|'.join(map(re.escape, words)) + r')\b'
+        
+        # Use re.findall to find all matching words
+        matches = re.findall(pattern, text)
+        
+        return matches
 
     def add_announcements(self, announcements:list[str], json_file:str)-> list[str]:
         # Load existing announcements from JSON file or initialize an empty list

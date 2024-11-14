@@ -33,7 +33,7 @@ jobs:
 
     - name: Check if cache was restored
       run: |
-        if [ ${{ steps.cache-data.outputs.cache-hit }} == 'true' ]; then
+        if [ ${{steps.cache-meetups.outputs.cache-hit}} == 'true' ]; then
           echo "Cache was restored from previous run!"
         else
           echo "No cache found, running full setup."
