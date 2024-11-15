@@ -88,7 +88,7 @@ Should Find Suitable Meetups from Meetup.com
             ${anchor}=    Get From List    ${anchors}    0
             ${href}=    Get Attribute    ${anchor}    href
             
-            ${line}=    Form Slack Link    Meetup.com:${header}    ${href}
+            ${line}=    Form Slack Link    Meetupcom:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${line}
         END 
     END
