@@ -10,7 +10,6 @@ Suite Setup       Setup Suite
 Suite Teardown    Teardown Suite
 *** Variables ***
 @{SEARCH_WORDS}    
-...    Kubernetes
 ...    Copilot
 ...    Robot Framework
 ...    Playwright
@@ -60,7 +59,7 @@ Should Find Suitable Meetups from Eficode
             ${suitability}=    Has Right Words    ${txt}    ${SEARCH_WORDS}    ${FORBIDDEN_WORDS}
             
             IF    ${suitability} > ${WORD_FREQ_LIMIT}                
-                ${anchor}=    Form Slack Link    Eficode: ${header}    ${link}
+                ${anchor}=    Form Slack Link    Eficode:${header}    ${link}
                 Append To List    ${QUALIFIED_NOTIFICATION}    ${anchor}
             END 
 
@@ -89,7 +88,7 @@ Should Find Suitable Meetups from Meetup.com
             ${anchor}=    Get From List    ${anchors}    0
             ${href}=    Get Attribute    ${anchor}    href
             
-            ${line}=    Form Slack Link    Meetup.com: ${header}    ${href}
+            ${line}=    Form Slack Link    Meetup.com:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${line}
         END 
     END
@@ -111,7 +110,7 @@ Should Find Suitable Meetups from dev.events
             Log To Console    message=${header}
             ${href}=    Get Attribute    ${meetup} >> a    href
             ${href}=    Add Baseurl If Relative    ${base_url}    ${href}
-            ${anchor}=    Form Slack Link    dev.events: ${header}    ${href}
+            ${anchor}=    Form Slack Link    dev.events:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${anchor}
         END 
     END
@@ -132,7 +131,7 @@ Should Find Suitable Meetups from Tivia
             ${header}=    Get Text    selector=${meetup} >> h5
             ${href}=    Get Attribute    ${meetup}    href
             ${href}=    Add Baseurl If Relative    ${base_url}    ${href}
-            ${line}=    Form Slack Link    Tivia: ${header}    ${href}
+            ${line}=    Form Slack Link    Tivia:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${line}
         END 
     END
@@ -154,7 +153,7 @@ Should Find Suitable Meetups from Applitools
             ${header}=    Get Text    selector=${meetup} >> h3.title
             ${href}=    Get Attribute    ${meetup} >> a    href
             ${href}=    Add Baseurl If Relative    ${base_url}    ${href}
-            ${line}=    Form Slack Link    Applitools: ${header}    ${href}
+            ${line}=    Form Slack Link    Applitools:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${line}
         END 
     END
@@ -176,7 +175,7 @@ Should Find Suitable Meetups from Testguild
             Log To Console    message=HEADER: ${header}
             ${href}=    Get Attribute    ${meetup} >> div > a    href
             ${href}=    Add Baseurl If Relative    ${base_url}    ${href}
-            ${line}=    Form Slack Link    Testguild: ${header}    ${href}
+            ${line}=    Form Slack Link    Testguild:${header}    ${href}
             Append To List    ${QUALIFIED_NOTIFICATION}    ${line}
         END 
     END
@@ -199,7 +198,7 @@ Crawl Meetupcom Group Page
             IF    ${freq} > ${WORD_FREQ_LIMIT}
                 ${link}=    Get Attribute    ${meetup}    href
                 ${header}=    Get Text    selector=div > h1
-                ${anchor}=    Form Slack Link    ${page_name}: ${header}    ${link}
+                ${anchor}=    Form Slack Link    ${page_name}:${header}    ${link}
                 Append To List    ${QUALIFIED_NOTIFICATION}    ${anchor}
             END 
 
@@ -226,10 +225,11 @@ Teardown Suite
     ${l}=    Get Length    ${new_notifications}
 
     IF    ${l} > 0
+        ${week_number}=    Get Current Week Number
+        @{new_notifications}=    Modify Notifications To Slack Format    ${new_notifications}
         ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{SEARCH_WORDS}
         Insert Into List    ${new_notifications}    0    ${EMPTY}
-        Insert Into List    ${new_notifications}    0    ${l} uutta meetup:pia löydetty!
-        Insert Into List    ${new_notifications}    0    Meetup:it avain sanoilla:${search_words}
+        Insert Into List    ${new_notifications}    0    Viikon ${week_number} uudet tapahtumat avain sanoilla:${search_words}
         ${notifications_str}=    Catenate    SEPARATOR=\n    @{new_notifications}
 
         IF    ${NOTIFY_SLACK}

@@ -5,6 +5,7 @@ Library    WebCrawlerLibrary
 Library    Collections
 Library    String
 Library    OperatingSystem
+Library    DateTime
 
 Suite Setup       Setup Suite
 Suite Teardown    Teardown Suite
@@ -40,7 +41,7 @@ Should Find Suitable Assigments from Finitec
             IF    ${freq} > 0
                 ${link}=    Get Attribute    ${assignment}    href
                 ${header}=    Get First Line    ${txt}
-                ${anchor}=    Form Slack Link    Finitec: ${header}    ${baseUrl}${link}
+                ${anchor}=    Form Slack Link    Finitec:${header}    ${baseUrl}${link}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}
             END 
     END
@@ -64,7 +65,7 @@ Should Find Suitable Assigments from Digia
                 ${onclick}=    Get Attribute    ${apply_btn}    onclick
                 ${assignment_id}=    Extract Word Between    ${onclick}    '    '
                 ${header}=    Get Line From    ${txt}    1     
-                ${anchor}=    Form Slack Link    Digia: ${header}    https://digiahub.com/Project/ApplyForProject/${assignment_id}
+                ${anchor}=    Form Slack Link    Digia:${header}    https://digiahub.com/Project/ApplyForProject/${assignment_id}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}
             END 
     END
@@ -86,7 +87,7 @@ Should Find Suitable Assigments from Onsiter
             IF    ${freq} > 0
                 ${show_assignment_btn}=    Get Element    ${assignment} >> a
                 ${link}=    Get Attribute    ${show_assignment_btn}    href
-                ${anchor}=    Form Slack Link    Onsiter: ${txt}    ${baseUrl}${link}
+                ${anchor}=    Form Slack Link    Onsiter:${txt}    ${baseUrl}${link}
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}       
             END 
     END
@@ -108,7 +109,7 @@ Should Find Suitable Assigments from Verama
             IF    ${freq} > 0
                 ${link}=    Get Attribute    ${assignment}    href
                 ${header}=    Get First Line    ${txt}
-                ${anchor}=    Form Slack Link    Verama: ${header}    ${baseUrl}/en${link}           
+                ${anchor}=    Form Slack Link    Verama:${header}    ${baseUrl}/en${link}           
                 Append To List    ${QUALIFIED_ASSIGNMENTS}    ${anchor}       
             END 
     END
@@ -128,15 +129,16 @@ Setup Suite
     
 
 Teardown Suite
-    @{new_assinments}=    Add Announcements    ${QUALIFIED_ASSIGNMENTS}    ${ANNOUNCEMENTS_JSON}
+    @{new_assinments}=    Add Notifications    ${QUALIFIED_ASSIGNMENTS}    ${ANNOUNCEMENTS_JSON}
     
     ${l}=    Get Length    ${new_assinments}
 
     IF    ${l} > 0
+        ${today}=    Get Current Date    result_format=%Y-%m-%d
+        @{new_assinments}=    Modify Notifications To Slack Format    ${new_assinments}
         ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{ASSIGNMENT_SEARCH_WORDS}
         Insert Into List    ${new_assinments}    0    ${EMPTY}
-        Insert Into List    ${new_assinments}    0    ${l} uutta toimeksiantoa löydetty!
-        Insert Into List    ${new_assinments}    0    Toimeksiannot avain sanoilla:${search_words}
+        Insert Into List    ${new_assinments}    0    Toimeksiannot ${today} avain sanoilla: ${search_words}
         ${assingments_str}=    Catenate    SEPARATOR=\n    @{new_assinments}
 
         IF    ${NOTIFY_SLACK}

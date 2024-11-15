@@ -82,6 +82,8 @@ class WebCrawlerLibrary:
         Returns:
         - The Slack-formatted link.
         """
+        text = text.strip()
+        link = link.strip()
         return f'<{link}|{text}>'
     
     def extract_word_between(self, txt: str, start: str, end: str)-> str:
@@ -250,5 +252,23 @@ class WebCrawlerLibrary:
         
         print(f"Removed elements older than {cutoff_date.strftime('%Y-%m-%d')}.")
 
+    def modify_notifications_to_slack_format(self, notifications: list[str]) -> str:
+        modified_notifications = []
+        publishers = []
+        pattern = r'\|(.*?)\:'
 
-    
+        for notification in notifications:
+            matches = re.findall(pattern, notification) 
+            publisher = matches[0]
+            publisher_slacked = f"●  *{publisher}*"
+            if publisher not in publishers:
+                publishers.append(publisher)
+                modified_notifications.append(publisher_slacked)
+
+            modified_notification = notification.replace(f"{publisher}:", "")
+            modified_notifications.append(f"    ○  {modified_notification}")
+
+        return modified_notifications
+
+    def get_current_week_number(self):
+        return datetime.now().isocalendar()[1]    
