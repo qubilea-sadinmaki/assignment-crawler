@@ -21,15 +21,25 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # Set cache key for the last working day's data
+    - name: Set cache key
+      id: cache-key
+      run: |
+        if [ "$(date +%u)" -eq 1 ]; then # Monday
+          # Use Friday's cache
+          last_working_day=$(date +'%Y-%m-%d' -d 'last Friday')
+        else
+          # Use the previous day's cache
+          last_working_day=$(date +'%Y-%m-%d' -d 'yesterday')
+        fi
+        echo "key=cache-announcements-${last_working_day}" >> $GITHUB_ENV
+
     - name: Restore cached Announcements
       id: cache-data
       uses: actions/cache/restore@v4
       with:
         path: tests/testdata/assignments.json
-        key: cache-${{ github.ref }}-${{ github.sha }}
-        restore-keys: |
-          cache-${{ github.ref }}-
-          cache-
+        key: ${{ env.key }}
 
     - name: Check if cache was restored
       run: |
@@ -64,7 +74,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/assignments.json
-        key: cache-${{ github.ref }}-${{ github.sha }}
+        key: cache-announcements-$(date +'%Y-%m-%d')
   
 
     - name: Archive Robot Framework results
