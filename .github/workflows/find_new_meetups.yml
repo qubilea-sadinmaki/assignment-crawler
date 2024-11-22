@@ -21,15 +21,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # Step 2: Set dynamic cache key
+    - name: Set Cache Key
+      id: cache-key
+      run: |
+        echo "key=cache-announcements-$(date +'%Y-%U')" >> $GITHUB_ENV
+        echo "restore_key=cache-announcements-$(date -d 'last week' +'%Y-%U')" >> $GITHUB_ENV
+
     - name: Restore cached meetups
       id: cache-meetups
       uses: actions/cache/restore@v4
       with:
         path: tests/testdata/meetups.json
-        key: cache-${{ github.ref }}-${{ github.sha }}
-        restore-keys: |
-          cache-${{ github.ref }}-
-          cache-
+        key: ${{ env.restore_key }}
 
     - name: Check if cache was restored
       run: |
@@ -64,7 +68,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/meetups.json
-        key: cache-${{ github.ref }}-${{ github.sha }}
+        key: ${{ env.key }}
   
 
     - name: Archive Robot Framework results
