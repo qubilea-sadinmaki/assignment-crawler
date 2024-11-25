@@ -33,7 +33,7 @@ jobs:
           last_working_day=$(date +'%Y-%m-%d' -d 'yesterday')
         fi
         echo "restore_key=cache-announcements-${last_working_day}" >> $GITHUB_ENV
-        echo "key=cache-announcements-$(date +'%Y-%U')" >> $GITHUB_ENV
+        echo "key=cache-announcements-$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
     - name: Restore cached Announcements
       id: cache-data
