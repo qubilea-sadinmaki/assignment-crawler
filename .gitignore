@@ -6,5 +6,5 @@ playwright-log.txt
 report.html
 *.pyc
 /scripts
-.github/workflows/find_new_announcements_test.yml
 tests/testdata/meetups.json
+/.github/workflows/dev

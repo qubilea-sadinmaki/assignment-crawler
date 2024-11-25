@@ -32,14 +32,15 @@ jobs:
           # Use the previous day's cache
           last_working_day=$(date +'%Y-%m-%d' -d 'yesterday')
         fi
-        echo "key=cache-announcements-${last_working_day}" >> $GITHUB_ENV
+        echo "restore_key=cache-announcements-${last_working_day}" >> $GITHUB_ENV
+        echo "key=cache-announcements-$(date +'%Y-%U')" >> $GITHUB_ENV
 
     - name: Restore cached Announcements
       id: cache-data
       uses: actions/cache/restore@v4
       with:
         path: tests/testdata/assignments.json
-        key: ${{ env.key }}
+        key: ${{ env.restore_key }}
 
     - name: Check if cache was restored
       run: |
@@ -74,7 +75,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: tests/testdata/assignments.json
-        key: cache-announcements-$(date +'%Y-%m-%d')
+        key: ${{ env.key }}
   
 
     - name: Archive Robot Framework results
