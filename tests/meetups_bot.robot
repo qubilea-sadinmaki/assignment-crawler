@@ -221,11 +221,11 @@ Setup Suite
 
 Teardown Suite
     @{new_notifications}=    Add Notifications    ${QUALIFIED_NOTIFICATION}    ${JSON_PATH}
-    
+    ${week_number}=    Get Current Week Number
     ${l}=    Get Length    ${new_notifications}
 
     IF    ${l} > 0
-        ${week_number}=    Get Current Week Number
+        
         @{new_notifications}=    Modify Notifications To Slack Format    ${new_notifications}
         ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{SEARCH_WORDS}
         Insert Into List    ${new_notifications}    0    ${EMPTY}
@@ -239,6 +239,9 @@ Teardown Suite
             Log    ${notifications_str}
         END
     ELSE
+        IF    ${NOTIFY_SLACK}
+            Notify Slack    Viikolle ${week_number} ei löytynyt uusia tapahtumia avain sanoilla:${search_words}    ${SLACK_URL}
+        END
         Log To Console    No new meetups found!
     END
     

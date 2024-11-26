@@ -130,13 +130,13 @@ Setup Suite
 
 Teardown Suite
     @{new_assinments}=    Add Notifications    ${QUALIFIED_ASSIGNMENTS}    ${ANNOUNCEMENTS_JSON}
-    
+    ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{ASSIGNMENT_SEARCH_WORDS}
     ${l}=    Get Length    ${new_assinments}
 
     IF    ${l} > 0
         ${today}=    Get Current Date    result_format=%Y-%m-%d
         @{new_assinments}=    Modify Notifications To Slack Format    ${new_assinments}
-        ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{ASSIGNMENT_SEARCH_WORDS}
+        
         Insert Into List    ${new_assinments}    0    ${EMPTY}
         Insert Into List    ${new_assinments}    0    Toimeksiannot ${today} avain sanoilla: ${search_words}
         ${assingments_str}=    Catenate    SEPARATOR=\n    @{new_assinments}
@@ -148,6 +148,9 @@ Teardown Suite
             Log    ${assingments_str}
         END
     ELSE
+        IF    ${NOTIFY_SLACK}
+            Notify Slack    Uusia toimeksiantoja ei löytynyt ${today} avain sanoilla: ${search_words}    ${SLACK_URL}
+        END
         Log To Console    No new assignments found!
     END
     
