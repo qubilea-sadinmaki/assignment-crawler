@@ -132,9 +132,10 @@ Teardown Suite
     @{new_assinments}=    Add Notifications    ${QUALIFIED_ASSIGNMENTS}    ${ANNOUNCEMENTS_JSON}
     ${search_words}=    Catenate    SEPARATOR=,${EMPTY}    @{ASSIGNMENT_SEARCH_WORDS}
     ${l}=    Get Length    ${new_assinments}
-
+    ${today}=    Get Current Date    result_format=%Y-%m-%d
+    
     IF    ${l} > 0
-        ${today}=    Get Current Date    result_format=%Y-%m-%d
+        
         @{new_assinments}=    Modify Notifications To Slack Format    ${new_assinments}
         
         Insert Into List    ${new_assinments}    0    ${EMPTY}
